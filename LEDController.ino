@@ -1,8 +1,6 @@
 #include "WiFiConnection.h"
 #include "ControllLED.h"
-
-WiFiConnection connection;
-ControllLED under(5, 4, 0);
+#include "MQTTConnection.h"
 
 enum TableLevel{
   all,
@@ -23,61 +21,72 @@ enum LEDstate {
   fade
 };
 
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
-  connection.Connect();
-  under.Initialize();
-  Serial.println("setup end");
-}
+WiFiConnection connection;
+MQTTConnection mqtt();
+
+ControllLED All(5, 4, 0);
+ControllLED Top(5, 4, 0);
+ControllLED Sides(5, 4, 0);
+ControllLED Bottom(5, 4, 0);
 
 LEDstate state = off;
 TableLevel level = all;
+
+void setup() {
+  connection.Connect();
+  mqtt.Initialize();
+  All.Initialize();
+  Top.Initialize();
+  Sides.Initialize();
+  Bottom.Initialize();
+}
+
 void loop() {
-  switch(level){
+  mqtt.MQTTLoop();
+  switch(TableLevel(mqtt.getLevel())){
     case all:
-      LEDState();
+      LEDState(All);
       break;
     case top:
-      LEDState();
+      LEDState(Top);
       break;
     case sides:
-      LEDState();
+      LEDState(Sides);
       break;
     case bottom:
-      LEDState();
+      LEDState(Bottom);
       break;
   }
 }
 
-void LEDState() {
-  switch (state) {
+void LEDState(ControllLED level) {
+  switch (LEDstate(mqtt.getFunction())) {
     case off:
-      under.TurnOff();
+      level.TurnOff();
       break;
     case red:
-      under.Red(1);
+      level.Red(1);
       break;
     case green:
-      under.Green(1);
+      level.Green(1);
       break;
     case blue:
-      under.Blue(1);
+      level.Blue(1);
       break;
     case yellow:
-      under.Yellow(1);
+      level.Yellow(1);
       break;
     case magenta:
-      under.Magenta(1);
+      level.Magenta(1);
       break;
     case cyan:
-      under.Cyan(1);
+      level.Cyan(1);
       break;
     case white:
-      under.White(1);
+      level.White(1);
       break;
     case fade:
-      under.Fade(int(state));
+      level.Fade(int(state));
       break;
   }
 }

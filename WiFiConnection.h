@@ -2,8 +2,8 @@
 #include <ESP8266WiFi.h>
 #include "WiFiDatas.h"
 
-WiFiClient client;
-WiFiDatas datas;
+WiFiClient wifiClient;
+WiFiDatas wifiData;
 
 class WiFiConnection{
   public:
@@ -12,7 +12,7 @@ class WiFiConnection{
   }
   
   void Connect(){
-    WiFi.begin(datas.getSsid(), datas.getPassword());
+    WiFi.begin(wifiData.getSsid(), wifiData.getPassword());
 
     while (WiFi.status() != WL_CONNECTED) 
           {
