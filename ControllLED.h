@@ -81,44 +81,41 @@ class ControllLED {
     }
 
     //Controll the strip all base colors
-    void Fade(int state) {
-      while (state == 8) {
-        if (redGreen) {
-          analogWrite(pinR, var);
-          analogWrite(pinG, map(var, 0, 1023, 1023, 0));
-          delay(5);
-          var++;
-          if (var == 1023) {
-            redGreen = false;
-            greenBlue = true;
-            var = 0;
-          }
+    void Fade() {
+      if (redGreen) {
+        analogWrite(pinR, var);
+        analogWrite(pinG, map(var, 0, 1023, 1023, 0));
+        delay(5);
+        var++;
+        if (var == 1023) {
+          redGreen = false;
+          greenBlue = true;
+          var = 0;
         }
+      }
 
-        if (greenBlue) {
-          analogWrite(pinG, var);
-          analogWrite(pinB, map(var, 0, 1023, 1023, 0));
-          delay(5);
-          var++;
-          if (var == 1023) {
-            greenBlue = false;
-            blueRed = true;
-            var = 0;
-          }
+      if (greenBlue) {
+        analogWrite(pinG, var);
+        analogWrite(pinB, map(var, 0, 1023, 1023, 0));
+        delay(5);
+        var++;
+        if (var == 1023) {
+          greenBlue = false;
+          blueRed = true;
+          var = 0;
         }
+      }
 
-        if (blueRed) {
-          analogWrite(pinB, var);
-          analogWrite(pinR, map(var, 0, 1023, 1023, 0));
-          delay(5);
-          var++;
-          if (var == 1023) {
-            blueRed = false;
-            redGreen = true;
-            var = 0;
-          }
+      if (blueRed) {
+        analogWrite(pinB, var);
+        analogWrite(pinR, map(var, 0, 1023, 1023, 0));
+        delay(5);
+        var++;
+        if (var == 1023) {
+          blueRed = false;
+          redGreen = true;
+          var = 0;
         }
-        state = 0;
       }
     }
 };

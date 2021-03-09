@@ -2,7 +2,7 @@
 #include "ControllLED.h"
 #include "MQTTConnection.h"
 
-enum TableLevel{
+enum TableLevel {
   all,
   top,
   sides,
@@ -21,20 +21,38 @@ enum LEDstate {
   fade
 };
 
-WiFiConnection connection;
-MQTTConnection mqtt();
+TableLevel LevelState(String x) {
+  if (x.equals("all")) return all;
+  if (x.equals("top")) return top;
+  if (x.equals("sides")) return sides;
+  if (x.equals("bottom")) return bottom;
+}
+
+LEDstate ModeState(String x) {
+  if ( x.equals("off")) return off;
+  if ( x.equals("red")) return red;
+  if ( x.equals("green")) return green;
+  if ( x.equals("blue")) return blue;
+  if ( x.equals("yellow")) return yellow;
+  if ( x.equals("magenta")) return magenta;
+  if ( x.equals("cyan")) return cyan;
+  if ( x.equals("white")) return white;
+  if ( x.equals("fade")) return fade;
+}
+
+WiFiConnection wifi;
+MQTTConnection mqtt;
 
 ControllLED All(5, 4, 0);
 ControllLED Top(5, 4, 0);
 ControllLED Sides(5, 4, 0);
 ControllLED Bottom(5, 4, 0);
 
-LEDstate state = off;
-TableLevel level = all;
-
 void setup() {
-  connection.Connect();
-  mqtt.Initialize();
+  Serial.begin(115200);
+  wifi.Connect();
+  mqtt.Connect();
+  client.onMessage(messageReceived);
   All.Initialize();
   Top.Initialize();
   Sides.Initialize();
@@ -43,7 +61,7 @@ void setup() {
 
 void loop() {
   mqtt.MQTTLoop();
-  switch(TableLevel(mqtt.getLevel())){
+  switch (LevelState(function)) {
     case all:
       LEDState(All);
       break;
@@ -59,34 +77,43 @@ void loop() {
   }
 }
 
-void LEDState(ControllLED level) {
-  switch (LEDstate(mqtt.getFunction())) {
+void LEDState(ControllLED lvl) {
+  switch (ModeState(choosen)) {
     case off:
-      level.TurnOff();
+      lvl.TurnOff();
       break;
     case red:
-      level.Red(1);
+      lvl.Red(1);
       break;
     case green:
-      level.Green(1);
+      lvl.Green(1);
       break;
     case blue:
-      level.Blue(1);
+      lvl.Blue(1);
       break;
     case yellow:
-      level.Yellow(1);
+      lvl.Yellow(1);
       break;
     case magenta:
-      level.Magenta(1);
+      lvl.Magenta(1);
       break;
     case cyan:
-      level.Cyan(1);
+      lvl.Cyan(1);
       break;
     case white:
-      level.White(1);
+      lvl.White(1);
       break;
     case fade:
-      level.Fade(int(state));
+      lvl.Fade();
       break;
+  }
+}
+
+void messageReceived(String &topic, String &payload) {
+  if (topic.equals(topics[0])) {
+    function = payload;
+  }
+  if (topic.equals(topics[1])) {
+    choosen = payload;
   }
 }
