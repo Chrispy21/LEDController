@@ -19,7 +19,6 @@ class MQTTConnection {
 
     void Connect() {
       while (!client.connect(mqttData.getClientName(), mqttData.getUserName(), mqttData.getUserPass())) {
-        Serial.print(".");
         delay(1000);
       }
       for (int i = 0; i < 13; i++) {

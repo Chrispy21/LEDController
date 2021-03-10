@@ -43,18 +43,14 @@ LEDstate ModeState(String x) {
 WiFiConnection wifi;
 MQTTConnection mqtt;
 
-ControllLED All(5, 4, 0);
-ControllLED Top(5, 4, 0);
-ControllLED Sides(5, 4, 0);
-ControllLED Bottom(5, 4, 0);
+ControllLED Top(13, 1, 3);
+ControllLED Sides(2, 14, 12);
+ControllLED Bottom(0, 4, 5);
 
 void setup() {
-  Serial.begin(115200);
   wifi.Connect();
   mqtt.Connect();
-  client.onMessage(messageReceived);
-  All.Initialize();
-  Top.Initialize();
+  client.onMessage(messageReceived);  Top.Initialize();
   Sides.Initialize();
   Bottom.Initialize();
 }
@@ -63,7 +59,9 @@ void loop() {
   mqtt.MQTTLoop();
   switch (LevelState(function)) {
     case all:
-      LEDState(All);
+      LEDState(Top);
+      LEDState(Sides);
+      LEDState(Bottom);
       break;
     case top:
       LEDState(Top);
